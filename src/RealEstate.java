@@ -407,14 +407,18 @@ public class RealEstate {
 
     public void removeProperty(User user) {
         Scanner scanner = new Scanner(System.in);
+        Property[] propertiesUser;
+        int index;
+        int indexPropertyToRemove;
+        int indexAll;
+
         Property[] allProperties = new Property[this.properties.length - 1];
         if (counterProperties(user) == 0) {
             System.out.println("Don't have properties to delete");
         } else {
-            Property[] propertiesUser = new Property[counterProperties(user)];
-            int index = 0;
-            int indexPropertyToRemove;
-            int indexAll = 0;
+            propertiesUser = new Property[counterProperties(user)];
+            index = 0;
+            indexAll = 0;
             printUserProperties(user);
             for (int i = 0; i < this.properties.length; i++) {
                 if (this.properties[i].getUser().getUsername().equals(user.getUsername())) {
@@ -422,22 +426,22 @@ public class RealEstate {
                     index++;
                 }
             }
-            System.out.println("Enter property number to remove: ");
-            indexPropertyToRemove = scanner.nextInt();
-            if (indexPropertyToRemove > 1 && indexPropertyToRemove < counterProperties(user) + 1) {
-                propertiesUser = removePropertyFromArray(propertiesUser[indexPropertyToRemove - 1], propertiesUser);
-                for (int i = 0; i < this.properties.length; i++) {
-                    if (!(this.properties[i].equals(propertiesUser[indexPropertyToRemove - 1]))) {
-                        allProperties[indexAll] = this.properties[i];
-                        indexAll++;
-                    }
+            do {
+                System.out.println("Enter property number to remove: ");
+                indexPropertyToRemove = scanner.nextInt() - 1;
+            } while (indexPropertyToRemove >= 0 && indexPropertyToRemove <= counterProperties(user));
+
+            propertiesUser = removePropertyFromArray(propertiesUser[indexPropertyToRemove], propertiesUser);
+            for (int i = 0; i < this.properties.length; i++) {
+                if (!(this.properties[i].equals(propertiesUser[indexPropertyToRemove]))) {
+                    allProperties[indexAll] = this.properties[i];
+                    indexAll++;
                 }
             }
             this.properties = allProperties;
             System.out.println("The property removed successfully :)");
         }
     }
-
     private Property[] removePropertyFromArray(Property property, Property[] properties) {
         Property[] newArray = new Property[properties.length - 1];
         int newArrayIndex = 0;

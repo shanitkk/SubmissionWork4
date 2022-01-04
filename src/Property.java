@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Property {
 
     public static final int REGULAR_APARTMENT = 1;
@@ -134,7 +136,19 @@ public class Property {
                 "\n(Contact info: " + this.user.toString());
     }
 
-//    public boolean isDeleted() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Property)) return false;
+        Property property = (Property) o;
+        return rooms == property.rooms && price == property.price && type == property.type && privateOrApartment == property.privateOrApartment && forRent == property.forRent && houseNumber == property.houseNumber && floor == property.floor && address.equals(property.address) && user.equals(property.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, rooms, price, type, privateOrApartment, forRent, houseNumber, floor, user);
+    }
+    //    public boolean isDeleted() {
 //        return deleted;
 //    }
 //
