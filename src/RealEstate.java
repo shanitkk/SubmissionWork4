@@ -8,12 +8,12 @@ public class RealEstate {
     public static final String IS_MEDIATOR = "yes";
     public static final String REGULAR_USER = "no";
     public static final int ADDRESSES_LENGTH = 10;
-    public static final int FIRST_OPTION_FOR_USER = 1;
-    public static final int SECOND_OPTION_FOR_USER = 2;
-    public static final int THIRD_OPTION_FOR_USER = 3;
-    public static final int FOURTH_OPTION_FOR_USER = 4;
-    public static final int FIFTH_OPTION_FOR_USER = 5;
-    public static final int SIXTH_OPTION_FOR_USER = 6;
+    public static final int CREATE_NEW_PROPERTY = 1;
+    public static final int REMOVE_PROPERTY = 2;
+    public static final int SHOW_ALL_PROPERTIES = 3;
+    public static final int SHOW_USER_PROPERTIES = 4;
+    public static final int SEARCH_BY_PARAMETER = 5;
+    public static final int LOG_OFF = 6;
     public static final int MAX_POST_REGULAR_USER = 3;
     public static final int MAX_POST_MEDIATOR = 10;
     public static final int REGULAR_APARTMENT = 1;
@@ -21,6 +21,12 @@ public class RealEstate {
     public static final int PRIVATE_HOUSE = 3;
     public static final String FOR_RENT = "yes";
     public static final String NOT_FOR_RENT = "no";
+    public static final int CHOOSE_FOR_RENT = 1;
+    public static final int CHOOSE_FOR_SALE = 2;
+    public static final int IGNORE = -999;
+    public static final int MIN_NUMBER_OF_ROOMS = 0;
+    public static final int PRICE_RANGE = 1;
+    public static final int THE_LOWEST_PRICE = 0;
 
 
     private User[] users;
@@ -58,7 +64,7 @@ public class RealEstate {
             isUsernameExist = usernameExist(username);
         } while (isUsernameExist);
         do {
-            System.out.println("Enter a strong password:  \n" +
+            System.out.println("Enter strong password:  \n" +
                     "The password must contain one digit and must contain one of that 3 chars: $,%,_ ");
             userPassword = scanner.nextLine();
             isStrongPassword = strongPassword(userPassword);
@@ -79,7 +85,7 @@ public class RealEstate {
         for (int i = 0; i < this.users.length; i++) {
             if (this.users[i].getUsername().equals(username)) {
                 hasThisUsername = true;
-                System.out.println("That username is exist \n");
+                System.out.println("That user name is exist \n");
                 break;
             }
         }
@@ -170,7 +176,7 @@ public class RealEstate {
     public User login() {
         Scanner scanner = new Scanner(System.in);
         User userToCheck = null;
-        System.out.println("Enter your username: ");
+        System.out.println("Enter your user name: ");
         String username = scanner.nextLine();
         System.out.println("Enter your password: ");
         String password = scanner.nextLine();
@@ -187,31 +193,36 @@ public class RealEstate {
             userChoice = PrintMenuExistingUser();
             do {
                 switch (userChoice) {
-                    case FIRST_OPTION_FOR_USER: {
+                    case CREATE_NEW_PROPERTY: {
                         postNewProperty(userToCheck);
                         userChoice = PrintMenuExistingUser();
                         break;
                     }
-                    case SECOND_OPTION_FOR_USER: {
+                    case REMOVE_PROPERTY: {
                         removeProperty(userToCheck);
                         userChoice = PrintMenuExistingUser();
                         break;
                     }
-                    case THIRD_OPTION_FOR_USER: {
+                    case SHOW_ALL_PROPERTIES: {
                         printAllProperties();
                         userChoice = PrintMenuExistingUser();
                         break;
                     }
-                    case FOURTH_OPTION_FOR_USER: {
+                    case SHOW_USER_PROPERTIES: {
                         printUserProperties(userToCheck);
                         userChoice = PrintMenuExistingUser();
                         break;
                     }
-                    case SIXTH_OPTION_FOR_USER: {
+                    case SEARCH_BY_PARAMETER: {
+                        search();
+                        userChoice = PrintMenuExistingUser();
+                        break;
+                    }
+                    case LOG_OFF: {
                         break;
                     }
                 }
-            } while (userChoice != SIXTH_OPTION_FOR_USER);
+            } while (userChoice != LOG_OFF);
         }
         return userToCheck;
     }
@@ -220,14 +231,14 @@ public class RealEstate {
         Scanner scanner = new Scanner(System.in);
         int userChoice;
         do {
-            System.out.println("\n" + FIRST_OPTION_FOR_USER + ": Post a new property. \n" +
-                    SECOND_OPTION_FOR_USER + ": Remove property posting. \n" +
-                    THIRD_OPTION_FOR_USER + ": View all properties that post \n" +
-                    FOURTH_OPTION_FOR_USER + ": View all properties that the user has post \n" +
-                    FIFTH_OPTION_FOR_USER + ": Property search according to parameters \n" +
-                    SIXTH_OPTION_FOR_USER + ": Logout -> return to the main menu \n" + "Enter your answer: ");
+            System.out.println("\n" + CREATE_NEW_PROPERTY + ": Post new property. \n" +
+                    REMOVE_PROPERTY + ": Remove property posting. \n" +
+                    SHOW_ALL_PROPERTIES + ": View all properties that post \n" +
+                    SHOW_USER_PROPERTIES + ": View all properties that the user has post \n" +
+                    SEARCH_BY_PARAMETER + ": Property search according to parameters \n" +
+                    LOG_OFF + ": Logout -> return to the main menu \n" + "Enter your answer: ");
             userChoice = scanner.nextInt();
-        } while (userChoice < FIRST_OPTION_FOR_USER || userChoice > SIXTH_OPTION_FOR_USER);
+        } while (userChoice < CREATE_NEW_PROPERTY || userChoice > LOG_OFF);
         return userChoice;
     }
 
@@ -246,19 +257,19 @@ public class RealEstate {
             String[] addressesArray = showCitiesList();
             System.out.println("The cities are: ");
             printStr(addressesArray);
-            System.out.print("Enter city from the list: ");
+            System.out.print("Enter city name from the list: ");
             cityChoice = scanner.nextLine();
             hasCity = isExist(addressesArray, cityChoice);
             if (hasCity) {
                 System.out.println("\nThese streets are in " + cityChoice);
                 String[] streetNameChoice = showStreetNameList(cityChoice);
                 printStr(streetNameChoice);
-                System.out.print("Enter street from the list: ");
+                System.out.print("Enter street name from the list: ");
                 streetChoice = scanner.nextLine();
                 hasStreet = isExist(streetNameChoice, streetChoice);
                 if (hasStreet) {
                     propertyDetails(cityChoice, streetChoice, user);
-                    System.out.println("property created successfully :)");
+                    System.out.println("Property created successfully :)");
                 } else {
                     System.out.println("\n Invalid value");
                     toPost = false;
@@ -268,7 +279,7 @@ public class RealEstate {
                 toPost = false;
             }
         } else {
-            System.out.println("you can't post more than " + maxOfPost);
+            System.out.println("You can't post more than " + maxOfPost);
             toPost = false;
         }
         return toPost;
@@ -366,7 +377,7 @@ public class RealEstate {
             rooms = scanner.nextInt();
         } while (!isPositiveNumber(rooms));
         do {
-            System.out.print("\nEnter number of house: ");
+            System.out.print("\nEnter house number: ");
             propertyNumber = scanner.nextInt();
         } while (!isPositiveNumber(propertyNumber));
 
@@ -411,7 +422,6 @@ public class RealEstate {
         int index;
         int indexPropertyToRemove;
         int indexAll;
-
         Property[] allProperties = new Property[this.properties.length - 1];
         if (counterProperties(user) == 0) {
             System.out.println("Don't have properties to delete");
@@ -442,6 +452,7 @@ public class RealEstate {
             System.out.println("The property removed successfully :)");
         }
     }
+
     private Property[] removePropertyFromArray(Property property, Property[] properties) {
         Property[] newArray = new Property[properties.length - 1];
         int newArrayIndex = 0;
@@ -478,12 +489,87 @@ public class RealEstate {
 
     public Property[] search() {
         Scanner scanner = new Scanner(System.in);
-        Property[] propertySearch = new Property[this.properties.length];
-        String forRent;
-        String type;
-        int rooms;
+        int userChoose;
+        Property[] searchArray = new Property[this.properties.length];
+        for (int i = 0; i < this.properties.length; i++) {
+            searchArray[i] = this.properties[i];
+        }
         int minPrice;
         int maxPrice;
-        return null;
+
+        do {
+            System.out.println("Press:\n1- For Rent\n2- For Sale\n -999 - Ignore");
+            userChoose = scanner.nextInt();
+        } while ((userChoose < CHOOSE_FOR_RENT || userChoose > CHOOSE_FOR_SALE) && userChoose != IGNORE);
+        if (userChoose == CHOOSE_FOR_RENT) {
+            for (int i = 0; i < searchArray.length; i++) {
+                if (searchArray[i].isForRent()) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        } else if (userChoose == CHOOSE_FOR_SALE) {
+            for (int i = 0; i < searchArray.length; i++) {
+                if (!(searchArray[i].isForRent())) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        }
+        do {
+            System.out.println("1- Regular apartment:\n 2- Penthouse:\n 3- Private house\n -999 - Ignore");
+            userChoose = scanner.nextInt();
+        } while ((userChoose < REGULAR_APARTMENT || userChoose > PRIVATE_HOUSE) && userChoose != IGNORE);
+        if (userChoose == REGULAR_APARTMENT) {
+            for (int i = 0; i < searchArray.length; i++) {
+                if (!(searchArray[i].getType() == REGULAR_APARTMENT)) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        } else if (userChoose == PENTHOUSE) {
+            for (int i = 0; i < searchArray.length; i++) {
+                if (!(searchArray[i].getType() == PENTHOUSE)) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        } else if (userChoose == PRIVATE_HOUSE) {
+            for (int i = 0; i < searchArray.length; i++) {
+                if (!(searchArray[i].getType() == PRIVATE_HOUSE)) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        }
+        do {
+            System.out.println("Enter number of rooms: \n To ignore choose -999");
+            userChoose = scanner.nextInt();
+        } while (userChoose < MIN_NUMBER_OF_ROOMS && userChoose != IGNORE);
+        for (int i = 0; i < searchArray.length; i++) {
+            if (!(searchArray[i].getRooms() == userChoose)) {
+                searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                i--;
+            }
+        }
+        do {
+            System.out.println("1- To choose the price range\n -999 - Ignore");
+            userChoose = scanner.nextInt();
+        } while (userChoose != PRICE_RANGE && userChoose != IGNORE);
+        if (userChoose == PRICE_RANGE) {
+            do {
+                System.out.println("Enter min price: ");
+                minPrice = scanner.nextInt();
+                System.out.println("Enter max price: ");
+                maxPrice = scanner.nextInt();
+            } while ((minPrice > maxPrice) || (maxPrice < THE_LOWEST_PRICE || minPrice < THE_LOWEST_PRICE));
+            for (int i = 0; i < searchArray.length; i++) {
+                if (!(searchArray[i].getPrice() >= minPrice && searchArray[i].getPrice() <= maxPrice)) {
+                    searchArray = removePropertyFromArray(searchArray[i], searchArray);
+                    i--;
+                }
+            }
+        }
+        return searchArray;
     }
 }
